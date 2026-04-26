@@ -46,10 +46,15 @@ export const removeFavorite = (aoId) =>
   request(`/favorites/${aoId}`, { method: 'DELETE' });
 
 // Fetch (search platforms, no DB storage)
-export const triggerFetch = (sources = ['BOAMP'], keywords = null) =>
+export const triggerFetch = (sources = ['BOAMP'], keywords = null, dateFrom = null, dateTo = null) =>
   request('/fetch', {
     method: 'POST',
-    body: JSON.stringify({ sources, ...(keywords ? { keywords } : {}) }),
+    body: JSON.stringify({
+      sources,
+      ...(keywords ? { keywords } : {}),
+      ...(dateFrom ? { date_from: dateFrom } : {}),
+      ...(dateTo ? { date_to: dateTo } : {}),
+    }),
   });
 
 // Stats

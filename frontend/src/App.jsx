@@ -109,6 +109,8 @@ export default function App() {
   const [fetchSources, setFetchSources] = useState({ BOAMP: true, DECP: true });
   const [toasts, setToasts] = useState([]);
   const [viewMode, setViewMode] = useState('search'); // 'search' or 'favorites'
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
 
   const toast = (message, type = 'info') => {
     const id = ++toastId;
@@ -193,7 +195,12 @@ export default function App() {
     }
     setFetching(true);
     try {
-      const result = await triggerFetch(sources, extraKeywords);
+      const result = await triggerFetch(
+        sources,
+        extraKeywords,
+        dateFrom || null,
+        dateTo || null,
+      );
       // Display search results locally (not from DB)
       let results = result.results || [];
       if (sourceFilter) {
@@ -353,6 +360,43 @@ export default function App() {
               />
               DECP
             </label>
+          </div>
+          <div className="date-range">
+            <label style={{ fontSize: '0.8rem', color: 'var(--text-light)' }}>Entre:</label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 4 }}>
+              <input
+                type="date"
+                value={dateFrom}
+                max={new Date().toISOString().split('T')[0]}
+                onChange={(e) => setDateFrom(e.target.value)}
+                style={{ flex: 1 }}
+              />
+              {dateFrom && (
+                <button
+                  className="btn btn-outline btn-sm"
+                  title="Effacer"
+                  onClick={() => setDateFrom('')}
+                  style={{ padding: '2px 6px' }}
+                >🗑</button>
+              )}
+            </div>
+            <label style={{ fontSize: '0.8rem', color: 'var(--text-light)' }}>et:</label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 4 }}>
+              <input
+                type="date"
+                value={dateTo}
+                onChange={(e) => setDateTo(e.target.value)}
+                style={{ flex: 1 }}
+              />
+              {dateTo && (
+                <button
+                  className="btn btn-outline btn-sm"
+                  title="Effacer"
+                  onClick={() => setDateTo('')}
+                  style={{ padding: '2px 6px' }}
+                >🗑</button>
+              )}
+            </div>
           </div>
           <button className="btn btn-primary" onClick={() => handleFetch()} disabled={fetching}>
             {fetching ? <><span className="spinner" /> Récupération...</> : '🔄 Lancer la recherche'}
